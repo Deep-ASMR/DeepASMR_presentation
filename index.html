@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepASMR Project 😴</title>
+    <link rel="stylesheet" href="index.css" type="text/css">
+    <script src="https://unpkg.com/wavesurfer.js"></script>
+</head>
+<body>
+    <header class="section">
+        <h1>DeepASMR 😴</h1>
+    </header> 
+    <section class="intro__contents">
+        <div class="main__contents__list">
+            <h4>Contents</h4>
+            <ul class="models">
+                <li><a href="#introduction">Introduction</a></li>
+                <li><a href="#mir">Music Generation Project</a></li>
+                <li><a href="#model-vae">Prior work</a></li>
+                <li><a href="#model-wavenet">Midi and Waveform</a></li>
+                <li><a href="#model-vqvae">Web Demo</a></li>
+                <li><a href="#model-melnet">Audio Processing</a></li>
+                <li><a href="#model-melnet">ASMR Project</a></li>
+                <li><a href="#model-melnet">Generative Model</a></li>
+            </ul>
+        </div>
+        <div class="introduction">
+            <h4>Introduction</h4>
+                <p style="padding-left: 50px">ASMR(Autonomous Sensory Meridian Response)은 시각, 청각, 촉각 등의 경로로 심리적 안정이나 쾌감을 유발한다고 알려져 있다. 본 연구의 목적은 딥러닝 기술을 이용하여 청취자에게 정서적 안정감을 주는 ASMR을 제작하는 것을 목표한다. 최근 ASMR이 본격적으로 인기를 얻으면서 ASMR 효과에 대한 과학적 실험에 대한 연구 결과가 발표되고 있으며 소셜미디어 등에서 ASMR을 경험한 사용자들의 긍정적인 후기를 어렵지 않게 확인할 수 있다. 본 연구는 ASMR이 주는 안정감, 수면 유도, 집중력 향상 등의 효과에 집중하고 사용자의 선호도를 반영하여 새로운 ASMR을 생성하는 DeepASMR을 제안한다.</p>
+        </div>
+
+        <div class="abstraction">
+            <h4>Abstraction</h4>
+                <p style="padding-left: 50px">Raw audio format 중 Waveform과 MIDI data를 비교하고 추가로 Waveform에서 적용 가능한 spectrogram과 melspectrogram의 차이를 분석하며 audio preprocessing을 진행하였다. 또한 background noise가 포함된 ASMR을 Generative model(VAE, VQ-VAE, Wavenet, Melnet)을 통해 학습하고 각 모델별로 생성된 ASMR sound 특징과 정성적 분석을 통해 Audio signal을 연구하였다.</p>
+        </div>
+        <div class="member">
+            <h4>Member</h4>
+                <figure class="avartar__container">
+                    <div class="tooltip">
+                    <a href="https://github.com/crosstar1228"><img class="avartar" src="./images/jaesung.PNG">
+                        <span class="tooltip__text">
+                            류제성
+                        </span>
+                    </a>
+                    </div>
+
+                    <div class="tooltip">
+                        <a href="https://github.com/ithingv" class="tooltip"><img class="avartar" src="./images/sanghoon.PNG"></a>
+                            <span class="tooltip__text">
+                                이상훈
+                            </span>
+                        </a>
+                    </div>
+
+                    <div class="tooltip">
+                        <a href="https://github.com/Jeon0866" class="tooltip"><img class="avartar" src="./images/jinhwan.PNG"></a>
+                            <span class="tooltip__text">
+                                전진환
+                            </span>
+                        </a>
+                    </div>
+
+                    <div class="tooltip">
+                        <a href="https://github.com/p2yeong" class="tooltip"><img class="avartar" src="./images/eunyoung.PNG"></a>
+                            <span class="tooltip__text">
+                                박은영
+                            </span>
+                        </a>
+                    </div>
+                    
+                </figure>
+            </div>
+        </div>
+
+    </section>
+    <hr>
+
+    <section class="contents">
+        <div class="outer__container">
+            <div class="sidebar">
+                <div class="contents__list">
+                    <p>Contents</p>
+                    <li><a href="#motivation">Motivation and Prior Work</a></li>
+                    <li><a href="#model-vae">VAE</a></li>
+                    <li><a href="#model-wavenet">WAVENET</a></li>
+                    <li><a href="#model-vqvae">VQ-VAE</a></li>
+                    <li><a href="#model-melnet">Melnet</a></li>
+                </div>
+            </div>
+            <div class="main_container">
+                <!-- Music Generation project -->
+                <div id="row">
+                    <h2>Music Generation Project</h2>
+                    <ul>
+                        <li class="list_util"> Music Information Retrieval</li>
+                        <p>음원 정보 복원(Music information retrival) 은 음원으로부터 정보를 추출하는 다양한 학문에 걸친 분야로 알려져 있다. MIR은 현실 세계에 다양하게 적용되며, 음악학(musicology), 음향심리학(psychoacoustics), 심리학, 신호처리(signal proecssing), 정보학(informatics), 특히 기계학습 분야에서 분류(Classification) 및 생성(Generation) 등의 형태로 다양하게 적용됩니다.  
+                            그 중에서도 자동 음원 생성(automatic music generation) 의 분야는 많은 MIR 연구자들에게 도전적인 주제이며 현재까지 이러한 시도들은 제한된 성공으로 남아있다.</p>
+                        <div class="column_1">
+                            <img class="img_box_shadowing img_margin-top" src="./images/mir.png" style="width:600px; height:300px;">
+                            <div class="img_caption"><a href="https://github.com/microsoft/muzic">Microsoft Muzic</a></div>
+                        </div>   
+                        <li class="list_util">AI Music Generation</li>
+                        <p>불과 얼마전만 하더라도 인공지능의 창조적 능력에 대한 의구심이 제기됐다. 인간과 기계를 구분하는 ‘감정’은 예술 분야에서 가장 중요한 요소이고 기계는 인간 고유의 영역인 감정을 이해하지 못한다는 의견이 많았다. 하지만 최근 음악 분야에서 글로벌 IT 기업을 필두로 딥러닝 기술을 활용해 음악 작곡에 도전하는 인공지능 프로젝트의 성과는 놀라움을 주고 있으며 “인공지능(AI)이 생산하는 음악의 진행 속도를 고려할 때, 10년 안에 수작업으로 작곡하는 것은 구식이 될 것으로 보인다.” 라는 전문가의 예측도 있다.</p>
+
+                        <p>OpenAI의 <a href="https://openai.com/blog/musenet/">MuseNet</a>(2019), <a href="https://openai.com/blog/jukebox/">Jukebox</a>(2020) 그리고 Google의 <a href="https://magenta.tensorflow.org/">Magenta</a>(2017) 프로젝트는 이러한 딥러닝 방식을 가장 잘 활용한 대표적인 음악 인공지능이다. MuseNet은 <a href="https://openai.com/blog/better-language-models/">GPT-2</a>, <a href="https://openai.com/blog/sparse-transformer/">Sparse Transformer</a> 모델을 사용하여 많은 양의 MIDI 데이터를 학습하였고 10개 악기를 사용해 새로운 음악을 만들어 낸다. 그리고 Jukebox는 <a href="https://arxiv.org/abs/1906.00446">VQ-VAE-2</a> 모델을 기반으로 Waveform의 Long Range Structure와 High diversity를 이해하여 원본과 상당히 유사한 사운드를 생성할 수 있음을 보여주었다. </p>
+                        <div class="row">
+                            <div class="column_2 div_padding">
+                                <img class="img_margin-top" src="./images/melody_mixer.gif" style="width:700px; height:300px;">
+                                <div class="img_caption"><a href="https://medium.com/@torinblankensmith/melody-mixer-using-deeplearn-js-to-mix-melodies-in-the-browser-8ad5b42b4d0b">Melody Mixer</a></div>
+                            </div>   
+                            <div class="column_2 div_padding">
+                                <img class="img_margin-top" src="./images/Omens of Love Primer MIDI.gif" style="width:700px; height:300px;" >
+                                <div class="img_caption"><a href="https://www.twilio.com/blog/generate-music-python-neural-networks-magenta-tensorflow" >Generating a basic melody in MIDI format</a></div>
+                            </div>  
+                        </div>
+                        
+                        <p>마지막으로 Google의 Magenta는 음악 시퀀스 데이터의 음악적 특성을 담아 요약된 잠재 벡터로 인코딩하고 그 후에 다시 음악 시퀀스로 디코딩하는 <a href="https://magenta.tensorflow.org/music-vae">MusicVAE</a> 모델을 사용하였다. 이러한 인공지능이 만들어낸 음악은 아직 인간이 만든 음악과는 구분이 되는 편이고 기존 음악보다 뛰어나다고 볼 수는 없다. 하지만 시간이 흐르고 점차 많은 음악 관련 데이터를 학습하고 컴퓨팅과 하드웨어의 발전이 동반되면 인공지능이 어떠한 음악을 만들어 낼 수 있을지 가늠하기 어렵다.</p>
+
+                        <div class="column_1">           
+                            <img class="img_box_shadowing img_margin-top" src="./images/musicVae.png" style="width:600px; height:300px"/>
+                            <a href="https://magenta.tensorflow.org/music-vae"><h4>MusicVAE</h4></a>
+                        </div>        
+                    </ul>
+                </div>
+                <hr>
+                <!-- prior work -->
+                <div id="row">
+                    <h2>Prior work</h2>                
+                        <ul>
+                            <li><a href="https://s-space.snu.ac.kr/handle/10371/175269">Deep Learning based ASMR</a></li>
+                            <p>딥러닝을 이용하여 기존 ASMR 음원들을 모으고 분류하며 사용자의 선호도를 바탕으로 새로운 ASMR 음원을 생성할 수 있는 플랫폼인 DeepASMR을 제안한다. DeepASMR은 ASMR 음원 분류 및 인식을 위해 기존의 음악 인식이나 소음 인식을 위한 DNN보다 개선된 DNN 모델들을 구축하여 분류의 정확도를 95% 이상까지 높였다.
+                            <div class="column_1">
+                                <img class="img_box_shadowing img_margin-top" src="./images/DNN.JPG" style="margin-bottom: 40px">.
+                                
+                            </div>
+                            <p>DNN을 기반으로 기존 ASMR 음원들을 변형하거나 합성하는 방식으로 새로운 ASMR 음원을 생산한다. 이를 위해 VAE(Variational Autoencoder) 및 GAN(Generative Adversarial Network) 방식을 이용하여 ASMR 음원 생성 DNN 모델을 구축하였다. 이를 통해 생성된 ASMR 음원들을 우리의 분류 DNN 모델에 입력하여 그 정확성을 검증한 결과, 70% 이상의 정확도를 보여 제안하는 DNN 모델이 양질의 ASMR 음원들을 생성하였음을 시사한다.</p>
+                            <div class="column_1">
+                                <img class="img_box_shadowing img_margin-top" src="./images/VAE.JPG" style="margin-bottom: 40px">
+                
+                            </div>
+                            <li><a href="https://www.youtube.com/embed/v9ND1fJYLpk">ASMR Generation Demo</a></li>
+                    
+                        </ul>
+                </div>
+                <hr>
+                <!-- MIDI AND WAVEFORM -->
+                <h2>MIDI and Waveform</h2>
+                <div class="row">
+                    <div class="column_2 div_padding">
+                            <!-- <div class='midi__container'> -->
+                                <img class="img_box_shadowing img_margin-top" src="./images/midi.gif" style="width: 700px; height: 400px" >
+                                <ul style="margin-top: 100px">
+                                    <h2 style="font-weight: bold;">WAV</h2>
+                                    <li style="text-align: left; font-size: 25px"> Waveform Audio File Format</li>
+                                    <li style="text-align: left; font-size: 20px"> Waveform은 ms(millisecond, 1000의 1초)를 2차원 이미지로 표현할 수 있지만 시간 축(Time)에 해당하는 부분이 길어지므로(Length) 용량이 커지는 단점이 있다.</li>
+                                    <li style="text-align: left; font-size: 20px"> WAV는 비 압축파일로 다른 포맷과 비교해서 고용량 파일이지만 단순성과 품질면에서 유리하다 </li>
+                                    <li style="text-align: left; font-size: 20px"> 비 압축 파일이므로 많은 불필요한 공간을 차지하는 단점이 있다.</li>
+                                </ul>
+                                
+                    </div>
+                    
+                    <div class="column_2 div_padding">
+                        <!-- <div class='midi__container'> -->
+                            <ul style="margin-top: 0px">
+                                <h2 style="font-weight: bold;">MIDI</h2>
+                                <li style="text-align: left; font-size: 25px"> Musical Instrument Digital Interface</li>
+                                <li style="text-align: left; font-size: 20px">MIDI는 악기의 음표, 소리의 크기등을 저장한 파일이며 다양한 악기 정보가 담길 수 있다.</li>
+                                <li style="text-align: left; font-size: 20px">MIDI는 note와 duration이 기록된 3개의 8 bytes packet으로 구성되어 있으며 waveform과 비교했을 때 용량이 compact 하다.</li>
+                                <li style="text-align: left; font-size: 20px">데이터가 wave에 비해 구하기 어려우며 음악적 도메인이 없다면 다루기 힘들다.</li>
+                            </ul>
+                            <img class="img_box_shadowing img_margin-top" src="./images/wave.gif" style="width: 700px; height: 400px; margin-top: 200px" >
+
+                    </div>
+
+                </div>
+
+                <hr>
+                <!-- Audio Proecessing -->
+                <div class="audio_processing">
+                    <h2>Audio Processing</h2>
+                    <ul>
+                    <li class="list_util">Waveform</li>
+                    <div class="row">
+                        <div class="column_2 div_padding">
+                                <!-- <div class='midi__container'> -->
+                                    <img class="img_box_shadowing img_margin-top" src="./images/audio_processing.gif" style="width: 700px; height: 400px" >
+                                    <div>
+                                        <h4>Waveform</h4>
+                                        <div style="padding: 10px 10px; margin-bottom:10px;">소리는 진동으로 인한 공기의 압축으로 생성되며
+                                            압축이 얼마나 됐느냐에 따라 진동하며 공간이나 매질을 전파해 나가는 현상인 Wave(파동)으로 표현</div>
+                                        <div style="text-decoration: underline; font-size: 30px; padding: 10px 10px; margin-bottom:10px;">Waveform 에서 얻을 수 있는 정보</div>
+                                        
+                                        <div style="font-weight: bold; text-align: left; padding-left: 200px">위상 (Phase; Degress of displacement)</div>
+                                        <div style="font-weight: bold; text-align: left; padding-left: 200px; margin-top:10px;">진폭 (Amplitude; Intensity)</div>
+                                        <div style="font-weight: bold; text-align: left; padding-left: 200px; margin-top:10px;">주파수 (Frequency)</div>
+                                    </div>
+                        </div>
+                        
+                        <div class="column_2 div_padding">
+                            <!-- <div class='midi__container'> -->
+                                <img class="img_box_shadowing img_margin-top" src="./images/Fourier_series_and_transform.gif" style="width: 500px; height: 400px" >
+                                <div>
+                                    <a href="https://ko.wikipedia.org/wiki/%ED%91%B8%EB%A6%AC%EC%97%90_%EB%B3%80%ED%99%98"><h4>Fourier Transform</h4></a>
+                                    <div style="padding: 10px 10px; margin-bottom:10px;">푸리에 변환은 임의의 입력 신호를 다양한 주파수를 갖는 주기 함수들의 합으로 분해하여 표현하는 것을 의미한다.</div>
+                                    <div style="padding: 10px 10px; margin-bottom:10px;">f 가 푸리에 급수로 분해되어 파란색으로 표시된다. 이 사인파들을 주파수에 따라 나열하면 영상의 후반부에 나타나는 것 처럼 <a href="https://ko.wikipedia.org/wiki/%EB%94%94%EB%9E%99_%EB%8D%B8%ED%83%80_%ED%95%A8%EC%88%98">디랙 델타 함수(Dirac delta function)</a>의 꼴로 표시된다. 이 때 주파수 영역에서의 함수를 f̂ 로 표시한다.</div>
+                                </div>
+                        </div>
+                    </div>
+                    
+                    <li class="list_util" style="margin-top: 100px">Spectrogram</li>
+                    <div class="row">
+                        <div class="column_1 div_padding" style="margin-bottom: 0px;">           
+                            <img class="img_box_shadowing img_margin-top" src="./images/spectrogram_magnitude.png" style="width:1000px; height:200px"/>
+                            <div class="img_caption">Magnitude spectrogram of a piano recording</div>
+                            <div><audio preload="metadata" controls><source src='./audio/original_phase.wav' type='audio/wav'></audio></div>
+                        </div> 
+                    </div>
+                    <div class="row">
+                        <div class="column_1 div_padding">
+                            <p style="padding: 0px 100px; line-height: 200%; text-align: left;">소리의 디지털 표현은 다양한 형태로 제공된다.  사운드는 일반적으로 시간이 지남에 따라 변화하는 파형의 모양을 인코딩하여 저장된다. 그러나 <span style="font-weight: bold">Waveform</span>은 그 자체로 분석하기는 어렵기 때문에 <span style="font-weight: 550">Waveform</span>의 중첩된 <span style="font-weight: 550">Window</span>에 대한 푸리에 변환을 계산하고 결과를 행렬로 표현하여 스펙트로그램으로 시각화 할 수 있다. 이렇게 스펙트로그램을 사용할 경우 Waveform 에 비해 시간 경과에 따른 파형의 <span style="font-weight: bold">Local Frequency contents</span>를 쉽게 확인 할 수 있다는 장점이 있다.</p>       
+                            <p style="padding: 0px 100px; line-height: 200%; text-align: left;">스펙트로그램은 복소수 값이며. 스펙트로그램은 시간 경과에 따라 각 시점에서 서로 다른 주파수 성분의 진폭과 위상을 모두 나타낸다. 위의 그림은 Magnitude 스펙트로그램이며 아래 그림은 phase 스펙트로그램을 시각화한 것이다. 아래의 Phase Spectrogram의 경우 Local Frequency Contents를 육안으로 확인하기 어려우며 값이 랜덤하게 분포돼있는 반면 Magnitude 스펙트로그램은 시간 경과에 따른 Local structure를 뚜렷하게 표현하고 있다.</p>
+
+                            <img class="img_box_shadowing img_margin-top" src="./images/spectrogram_phase.png" style="width:1000px; height:200px"/>
+                            <div class="img_caption">the corresponding phase spectrogram</div>
+                            <div class="labeled-audio"><audio preload="metadata" controls><source src='./audio/random_phase.wav' type='audio/wav'></audio></div>
+                            <p style="padding: 0px 100px; line-height: 200%; text-align: left;">이처럼 오디오 신호에서 정보를 추출할 때 유익한 정보를 추출하기 위해 phase component를 버리는 경우가 많다. 사실 이것이 바로 magnitude spectrogram을 간단히 "spectrogram"으로 언급하는 이유이다. 그러나 소리를 생성할 때 phase 정보는 소리 인식에 의미 있는 영향을 미치기 때문에 매우 중요하다. 위상 정보의 자세한 활용은 아래 링크에서 확인할 수 있다.</p>
+                            <a href="https://www.sciencedirect.com/science/article/abs/pii/S0167639304000950">More Detail</a>
+
+                        </div> 
+                    </div>
+
+                    <li class="list_util">Mel Filter</li>
+                    <div class="row">
+                        <div class="column_1 div_padding">
+                            <img class="img_box_shadowing img_margin-top" src="./images/mel_filter.PNG" style="width:1000px; height:200px"/>
+                            <div class="img_caption">Mel Scale</div>
+                            <p style="padding: 0px 100px; line-height: 200%; text-align: left;"> Mel-filter의 기본 아이디어는 사람의 청력은 1000Hz 이상의 frequency에 대해서는 덜 민감하므로 1000Hz까지는 Linear하게 그 이상은 Log scale로 변환하는 것이다.
+                            <p style="padding: 0px 100px; line-height: 200%; text-align: left;">Hertz scale은 사람이 받아들이는 민감도나 구분점을 잘 반영하지 못한다. 예를 들어 5000Hz 와 8000Hz를 들어도 사람은 3000 정도의 주파수가 차이나는 것을 인지하지 못한다. 따라서 이를 사람이 쉽게 인식 할 수 있는 scale로 변환해준 것이 Mel scale이다. 아래 그림처럼 1000Hz까지는 Linear하게 변환하다가 그 이후로는 Mel scale triangular filter를 만들어 곱해준다.  </p>
+                            <img class="img_box_shadowing img_margin-top" src="./images/mel_filter_bank.png" style="width:1000px; height:200px"/>
+                            <img class="img_box_shadowing img_margin-top" src="./images/mel_filter_1.png" style="width:1000px; height:200px"/>
+                             <p style="padding: 0px 100px; line-height: 200%; text-align: left;">보통 26개 혹은 40개 정도의 filter bank를 사용한다. 각 Filter Bank 영역대 마다 Energy값(spectrum power값 평균)을 모두 합하고 log를 취해준다. 이렇게 주파수 영역뿐만 아니라 amplitude 영역에서도 log scaling을 해주는 이유는 사람이 주파수 영역 뿐만 아니라 amplitude 영역에서도 log scale로 반응하기 때문이다. 이렇게 하면 결과적으로 filter bank 개수만큼의 Mel scale bin 별로 log power 값들이 구해진다. </p>
+                             <p style="padding: 0px 100px; line-height: 200%; text-align: left;">다시 frequency 관점에서 Mel-scale은 낮은 주파수에서 더 잘 구별하고 더 높은 주파수에서 덜 구별함으로써 소리에 대한 인간의 비선형 귀 인식을 모방하는 것을 목표로 한다. 다음 방정식을 사용하여 헤르츠(f)와 멜(m) 사이를 변환할 수 있습니다. melspectrogram은 frequency가 mel scale로 변환되는 spectrogram이다.</p>
+                                                    
+                            <img src="./images/mel_scale.png" alt="" style="width: 400px;">
+                        </div> 
+                    </div>
+                    <li class="list_util">Reconstruction</li>
+                    <div class="row">
+                        <div class="column_1 div_padding">
+                            <img style="margin-bottom: 30px;" class="img_box_shadowing img_margin-top" src="./images/reconstruction.PNG" style="width:1000px; height:200px"/>
+                            <img class="img_box_shadowing img_margin-top" src="./images/before_mel_filter.PNG" style="width:1000px; height:200px"/>
+                            <h4>Inverting the spectrogram</h4>
+                            <img class="img_box_shadowing img_margin-top" src="./images/after_mel_filter.PNG" style="width:1000px; height:200px"/>
+                            <h4>Inverting the mel spectrogram</h4>
+                        </div> 
+                    </div>
+                    </ul>
+
+                </div>
+                <hr>
+                <div class="ASMR Data">
+                    <h2>ASMR Project</h2>
+                        <ul>
+                            <li>Architecture</li>
+                                <div class="row">
+                                    <div class="column_2 div_padding" >
+                                        <!-- <div class='midi__container'> -->
+                                            <img class="img_box_shadowing img_margin-top" src="./images/ASMR_data_1.PNG">
+                                    </div>
+                                
+                                    <div class="column_2 div_padding" >
+                                        <!-- <div class='midi__container'> -->
+                                            <img class="img_box_shadowing img_margin-top" src="./images/ASMR_data_2.PNG" style="width: 650px; height: 317px">
+                                    </div>
+
+                                </div>
+                            <li>ASMR feature extraction</li>
+                                <div class="row">
+                                    <div class="column_2 div_padding" >
+                                        <!-- <div class='midi__container'> -->
+                                            <img class="img_box_shadowing img_margin-top" src="./images/asmr_mel_1.PNG" style="width: 700px; height: 200px">
+                                            <img class="img_box_shadowing img_margin-top" src="./images/asmr_mel_2.PNG" style="width: 700px; height: 200px">
+                                            <h4 style="margin-bottom:20px">ASMR (Fire) sound</h4>
+                                            <div class="labeled-audio"><audio preload="metadata" controls><source src='./audio/0.wav' type='audio/wav'></audio></div>
+                                    </div>
+                                
+                                    <div class="column_2 div_padding" >
+                                        <!-- <div class='midi__container'> -->
+                                            <img class="img_box_shadowing img_margin-top" src="./images/asmr_mel_3.PNG" style="width: 700px; height: 200px">
+                                            <img class="img_box_shadowing img_margin-top" src="./images/asmr_mel_4.PNG" style="width: 700px; height: 200px">
+                                            <h4 style="margin-bottom:20px">Human voice sound</h4>
+                                            <div class="labeled-audio"><audio preload="metadata" controls><source src='./audio/pt3_source1.wav' type='audio/wav'></audio></div>
+                                    </div>
+                                
+                                </div>
+                        </ul>
+                </div>
+                <hr>
+
+                <div class="Generative Model">
+                    <h2>Generative Model</h2>
+                    <ul>
+                        <li class="list_util"><a href="">Variational AutoEncoder (VAE)</a></li>
+                             <div class="row">
+                                <div class="column_1 div_padding" style="padding-left: 500px;">
+                                    <img class="img_box_shadowing img_margin-top" src="./images/vae_1.PNG"/>
+                                    <h4>Variational AutoEncoder</h4>
+                                    <ul style="margin-top: 50px; margin-bottom: 50px">
+                                        <li style="text-align: left; font-size: 22px;">VAE는 Training data와 같은 분포를 가지는 sample 분포에서 sampling을 하여 새로운 것을 생성하는 모델이다.</li>
+                                        <li style="text-align: left; font-size: 22px">주어진 Training data의 분포를 p_data(x)라 할 때 sample 모델 p_model(x) 역시 같은 분포를 가진다고 가정한다.</li>
+                                        <li style="text-align: left; font-size: 22px">p_model(x)를 통해 inference하면 새로운 x가 생성된다.</li>                                        
+                                        <li style="text-align: left; font-size: 22px"> Encoder 함수의 output은 latent variable의 분포의 𝜇 와 𝜎 를 내고, 이 output값을 표현하는 확률밀도함수를 생각해볼 수 있다.</li>
+                                        <li style="text-align: left; font-size: 22px"> Sampling한 값들을 backpropagation 하기 위해 <a href="">reparmeterization trick</a>을 사용한다.</li>
+                                        <li style="text-align: left; font-size: 22px"> Decoder는 Sampling된 z값을 입력으로 받아 Encoder의 Input의 shape으로 reconstruction 하는 layer이다.</li>
+
+                                    </ul>
+                                    <a href="https://jaan.io/what-is-variational-autoencoder-vae-tutorial/">More Detail</a>
+                                    
+                                        
+                                </div> 
+                             </div>
+
+
+                        <li class="list_util"><a href="">VAE Animation</a></li>
+                            <div class="row">
+                                <div class="column_1 div_padding">
+                                    <img class="img_box_shadowing img_margin-top" src="./images/vae_latent.gif.crdownload"/>
+                                    <h4>VAE Latent Space</h4>
+
+                                </div> 
+                            </div>
+                    
+                        <hr>
+
+                        <h2>VAE Result</h2>
+                        <div class="row">
+                            <div class="column_2 div_padding">
+                                    <!-- <div class='midi__container'> -->
+                                        <img class="img_box_shadowing img_margin-top" src="./images/raw_rain_melspectrogram.png" style="width: 700px; height: 400px" >
+                                        <div class="midi__text">
+                                            <h4>Originals Rain ASMR</h4>
+                                            
+                                            
+                                        </div>
+                                        <div><audio style="margin: 40px 0px"preload="metadata" controls><source src='./audio/raw_rain.wav' type='audio/wav'></audio></div>
+
+                            </div>
+                            
+                            <div class="column_2 div_padding">
+                                <!-- <div class='midi__container'> -->
+                                    <img class="img_box_shadowing img_margin-top" src="./images/sample_rain_melspectrogram.png" style="width: 700px; height: 400px" >
+                                        <div class="midi__text">
+                                            <h4>Generated Rain ASMR</h4>
+                                                                                     
+                                        </div>
+                                        <div><audio style="margin: 40px 0px"preload="metadata" controls><source src='./audio/sample_rain.wav' type='audio/wav'></audio></div>
+                                        
+                            </div>
+                            
+                        </div>
+                        
+                        <hr>
+                        <li class="list_util"><a href="https://arxiv.org/abs/1711.00937">Vector-Quantized Variational Autoencoders (VQ-VAE)</a></li>
+                        <div class="row">
+                            <p></p>
+                            <div class="column_1" style="padding-right: 200px">
+                                <img class="img_box_shadowing img_margin-top" src="./images/vqvae_1.PNG" style="width: 1000px; height: 400px" >
+                                <h4>VQ-VAE Structure</h4>
+                                <ul style="margin-top: 50px; margin-bottom: 50px; line-height: 200%">
+                                    <li style="text-align: left; font-size: 22px;"> VAE와 Discrete Representation을 결합한 새로운 생성모델(VQ-VAE)을 제안한다</li>
+                                    <li style="text-align: left; font-size: 22px"> Encoder의 output을 Discrete Representation Space로 Mapping하는 Vector Quantization Layer를 도입하였다.</li>
+                                    <li style="text-align: left; font-size: 22px"> Vector Quantisation(VQ)를 사용하여 너무 큰 분산으로 생기는 어려움을 피하면서 학습하기 편하고 Posterior Collapse 문제를 회피할 수 있다.  </li>                                        
+                                    <li style="text-align: left; font-size: 22px"> 연속표현을 사용하는 모델과 비등하면서도 이산표현의 유연함을 제공한다.</li>
+                                    <li style="text-align: left; font-size: 22px"> VQ 방법을 사용하면 모델이 강력한 autoregressive decoder와 짝을 이룰 때 latent들이 무시되는 “Posterior Collapse” 문제를 피할 수 있다.</li>
+                                    <li style="text-align: left; font-size: 22px"> 이어서 나올 Wavenet 모델이 decoder로 활용될 수 있다.</li>
+                                    
+                                </ul>
+                                                                <a href="https://velog.io/@crosstar1228/%EC%83%9D%EC%84%B1%EB%AA%A8%EB%8D%B8VQ-VAE%EB%9E%80">More Detail</a>
+
+                            </div>
+                        </div>
+                        <hr>
+                        <h2>Vector Quantization</h2>
+                        <div class="row">
+                            <div class="column_2 div_padding">
+                                <!-- <div class='midi__container'> -->
+                                    <a href="https://cs.marlboro.college/2001_2006/fall01/computation/compression/www.data-compression.com/vqanim.html" ><img class="img_box_shadowing img_margin-top" src="./images/vqvae_vq.png" style="width: 700px; height: 400px" ></a>
+                                    <div class="midi__text">
+                                        <h4>Discrete Spaces</h4>                                        
+                                    </div>
+                                </div>
+                        
+                            <div class="column_2 div_padding">
+                            <!-- <div class='midi__container'> -->
+                                <a href="https://cs.marlboro.college/2001_2006/fall01/computation/compression/www.data-compression.com/vqanim.html"></a><img class="img_box_shadowing img_margin-top" src="./images/lbgvq.gif" >
+                                <div>
+                                    <h4>Two-Dimensional Vector Quantization Animation</h4>
+                                </div>
+                        </div>
+                        </div>
+                        <div class="row">
+                            <div class="column_1" style="padding: 0px 100px">
+
+                                
+                            </div>
+                        </div>
+                        <hr>
+                        <h2>Wavenet</h2>
+                        <div class="row">
+                            <div class="column_2 div_padding" style="margin: 15px 0px">
+                                <!-- <div class='midi__container'> -->
+                                    <a href="https://cs.marlboro.college/2001_2006/fall01/computation/compression/www.data-compression.com/vqanim.html" ><img class="img_box_shadowing img_margin-top" src="./images/wavenet.gif" style="width: 700px; height: 400px" ></a>
+                                    <div class="midi__text">
+                                        <h4>Wavenet</h4>                                        
+                                    </div>
+                                    <div style="font-size:15px">The model predicts the distribution of potential signal values for each timestep, given past signal values.</div> 
+                                </div>
+                        
+                            <div class="column_2 div_padding" style="padding-right: 30px;">
+                            <!-- <div class='midi__container'> -->
+                                <div>
+                                    <ul>
+                                        <li style="text-align: left; font-size: 22px; padding-right: 30px" > Wavenet은 Audio waveform을 Generate 하는 Auto regressive Model이다.</li>
+                                        <li style="text-align: left; font-size: 22px"> waveform을 결합확률분포로 표현하고, 이를 Convolution layer를 쌓아서 모델링한다.</li>
+                                        <li style="text-align: left; font-size: 22px"> 1D convolution으로 Time-series data를 causal하게 Mapping하여 waveform을 생성하는 알고리즘 </li>                                        
+                                        <li style="text-align: left; font-size: 22px"> waveform의 경우 이전 상태의 정보가 중요하므로 dilated convolution으로 Receptive Field를 넓히는 방법을 사용한다.</li>
+                                        <li style="text-align: left; font-size: 22px"> 내부적으로 Residual block 및 skip connection을 사용한다</li>
+                                        <li style="text-align: left; font-size: 22px"> TTS, 음악, voice conversion 등에 활용</li>
+                                        <img class="img_box_shadowing img_margin-top" src="./images/conditional.PNG" style="width: 300px; height: 100px" >
+                                    </ul>
+                                    </div>
+                        </div>
+                        </div>
+                        <hr>
+                        
+                        <a href="https://avdnoord.github.io/homepage/vqvae/"><h2>VQ-VQE With Wavenet</h2></a>
+                        <div class="row">
+                            <div class="column_2 div_padding">
+                                    <!-- <div class='midi__container'> -->
+                                        <img class="img_box_shadowing img_margin-top" src="./images/vqvae_2.jpg" style="width: 700px; height: 400px" >
+                                        <div class="midi__text">
+                                            <h4>Reconstruction</h4>
+                                            <div style="padding: 10px 10px; margin-bottom:10px; text-align: left;">
+                                                이 샘플들은 VQ-VAE 모델로 입력되는 음원을 이산적 잠재 코드로 64배 압축한 결과물이다. VQ-VAE는 prior 없이도 파형 그 자체로부터 처음부터 끝까지 학습이 진행된다. 비록 reconstruction된 파형이 원본의 모양과 많이 다른 모습을 띠지만 그래도 꽤 유사하다.</div>
+                                            
+                                        </div>
+                                        <div><audio style="margin: 40px 0px"preload="metadata" controls><source src='./audio/original_phase.wav' type='audio/wav'></audio></div>
+                                        <div><audio preload="metadata" controls><source src='./audio/random_phase.wav' type='audio/wav'></audio></div>
+                                        <div class="img_caption">Originals and reconstructions</div>
+                                    </div>
+                            
+                            <div class="column_2 div_padding">
+                                <!-- <div class='midi__container'> -->
+                                    <img class="img_box_shadowing img_margin-top" src="./images/vqvae_3.PNG" style="width: 700px; height: 400px" >
+                                    <div>
+                                        <h4>Samples from Prior</h4>
+                                        <div style="padding: 10px 10px; margin-bottom:10px; text-align: left;"">
+                                            이산 잠재공간은 매우 압축된 상징적 표현 속에 말의 내용과 같은 중요한 특징을 음원으로부터 캐치한다. 이러한 특성 덕분에, 이 잠재 공간의 시작 부분에 또 다른 Wavenet 모델을 학습시킬 수 있으며 Long term dependency를 효과적으로 이해할 수 있다. 만약 데이터가 충분하면 하나의 모델이 심지어 전처리되지 않은 음원으로부터 직접 언어 모델을 학습할 수 있게 된다.
+</div>
+                                    </div>
+                                    <div><audio style="margin: 40px 0px"preload="metadata" controls><source src='./audio/pt2_sample1.wav' type='audio/wav'></audio></div>
+                                    <div><audio preload="metadata" controls><source src='./audio/pt2_sample2.wav' type='audio/wav'></audio></div>
+                                    <div class="img_caption">Sample Audio</div>
+                            </div>
+        
+                        </div>
+                        <hr>
+                        <h2>VQ-VAE Result</h2>
+                        <div class="row">
+                            <div class="column_2 div_padding">
+                                    <!-- <div class='midi__container'> -->
+                                        <img class="img_box_shadowing img_margin-top" src="./images/raw_fire_melspectrogram.png" style="width: 700px; height: 400px" >
+                                        <div class="midi__text">
+                                            <h4>Originals Fire ASMR</h4>
+                                            
+                                            
+                                        </div>
+                                        <div><audio style="margin: 40px 0px"preload="metadata" controls><source src='./audio/raw_fire.wav' type='audio/wav'></audio></div>
+
+                            </div>
+                            
+                            <div class="column_2 div_padding">
+                                <!-- <div class='midi__container'> -->
+                                    <img class="img_box_shadowing img_margin-top" src="./images/sample_fire_melspectrogram.png" style="width: 700px; height: 400px" >
+                                        <div class="midi__text">
+                                            <h4>Generated Fire ASMR</h4>
+                                                                                     
+                                        </div>
+                                        <div><audio style="margin: 40px 0px"preload="metadata" controls><source src='./audio/sample_fire.wav' type='audio/wav'></audio></div>
+                                        
+                            </div>
+                            
+                        </div>
+
+                        <hr>
+                        <a href="https://arxiv.org/abs/1906.01083"><h2>Melnet</h2></a>
+                        <div class="row">
+                            <p></p>
+                            <div class="column_1">
+                                <img class="img_box_shadowing img_margin-top" src="./images/melnet_1.gif" style="width: 700px; height: 300px" >
+                                <h4>Melnet</h4>
+                                <p style="padding: 0 50px; text-align: left; line-height: 200%;" >Autoregressive model은 간단한 분포를 모델링하여 복잡한 고차원 분포를 설명하는 방법이다. 모델이 한 번에 하나의 요소를 예측하도록 훈련되는 이 접근법은 Image, Text 및 Waveform을 포함한 다양한 데이터 양식에 성공적으로 적용되었다. 멜넷은 스펙트로그램의 모델링에 이와 같은 접근법을 적용한다. PixelCNN과 같은 Autoregressive 이미지 모델이 이미지의 공간 치수에 대한 분포를 픽셀 단위로 추정하는 것과 마찬가지로, MelNet은 스펙트로그램의 시간과 빈도 치수에 따른 분포 요소를 추정한다.</p>
+                                <p style="padding: 0 50px; text-align: left; line-height: 200%;" >Melnet은 두 가지 다른 자기 회귀 순서를 실험하였다. 첫 번째는 각 스펙트로그램 프레임을 저주파에서 고주파까지 거쳐 다음 프레임으로 진행하는 Time major ordering 이다. 두 번째는 Multiscale ordering이다.</p>
+                                <img class="img_box_shadowing img_margin-top" src="./images/melnet_2.PNG" style="width: 1000px; height: 200px" >
+                                <h4>Time major ordering</h4>
+                            </div>
+                        </div>
+                        
+
+                        <div class="row">
+                            <p></p>
+                            <div class="column_1">
+                                <img class="img_box_shadowing img_margin-top" src="./images/melnet_4.PNG" style="width: 1000px; height: 200px" >
+                                <h4>Upsampling</h4>
+                                <img class="img_box_shadowing img_margin-top" src="./images/melnet_3.PNG" style="width: 1000px; height: 200px" >
+                                <h4>Multiscale Modelling</h4>
+                                <p style="padding: 0 50px; text-align: left; line-height: 200%;">자기 회귀 모델의 한 가지 단점은 Global Structure보다 Local Structure를 훨씬 잘 학습하는 경향이 있다는 것이다. standard row-major ordering 순서로 이미지를 모델링할 때, 이는 현실적인 질감을 가지지만 객체 레벨에서 일관성 있는 높은 수준의 구조와 더 높은 수준의 장면 구성이 부족한 샘플을 생성한다. 이 문제는 고차원 분포를 모델링할 때 특히 두드러진다. 우리는 수십만 차원으로 스펙트로그램을 모델링하는 것을 목표로 하고 있기 때문에, 이러한 효과에 대응하기 위한 대책을 도입하는 것이 필수적이다. 이를 위해 대략적인 순서에 따라 스펙트로그램을 생성하는 멀티스케일 모델을 사용한다. 높은 수준의 구조를 캡처하는 저해상도 하위 샘플링된 스펙트로그램이 처음에 생성된 다음 고해상도 세부 정보를 추가하는 반복적인 업샘플링 절차가 이어진다. 이러한 방식으로 스펙트로그램을 생성함으로써 로컬 구조와 글로벌 구조를 학습하는 작업을 분리할 수 있다.</p>
+                            </div>    
+                        </div>
+                    
+                    <hr>
+                    <h2>Melnet result</h2>
+                    <div class="row">
+                        <p></p>
+                        <div class="column_1">
+                            <img class="img_box_shadowing img_margin-top" src="./images/tier_123.PNG" style="width: 1000px; height: 300px" >
+                            <img class="img_box_shadowing img_margin-top" src="./images/tier_456.PNG" style="width: 1000px; height: 300px" >
+                            <h4>ASMR Rain Upsampling</h4>
+                        </div>    
+                    </div>
+                                                
+            </div>
+    </section>
+
+    <script>
+    var wavesurfer = WaveSurfer.create({
+        container: '#waveform',
+        waveColor: '#dde5ec',
+        progressColor: '#03cebf',
+        barWidth: 4,
+        height: 90,
+        responsive: true,
+        hideScrollbar: true,
+        barRadius: 4
+        });
+
+        wavesurfer.load('audio/0.wav');
+
+        var playBtn = document.getElementById('playBtn');
+        var stopBtn = document.getElementById('stopBtn');
+        var volumeBtn = document.getElementById('volumeBtn');
+        
+        playBtn.onclick = function(){
+            wavesurfer.playPause();
+            if(playBtn.src.includes("play.png")){
+                playBtn.src = "images/pause.png";
+            } else {
+                playBtn.src = "images/play.png";
+            }
+        }
+
+        stopBtn.onclick = function(){
+            wavesurfer.stop();
+            playBtn.src = "images/play.png";
+        }
+
+        volumeBtn.onclick = function(){
+            wavesurfer.toggleMute();
+            if(volumeBtn.src.includes("volume.png")){
+                volumeBtn.src = "images/mute.png";
+            } else {
+                volumeBtn.src = "images/volume.png";
+            }
+        }
+
+        wavesurfer.on('finish', function(){
+            playBtn.src = "images/play.png"
+            wavesurfer.stop();
+        })
+
+    </script>
+
+
+</body>
+</html>
